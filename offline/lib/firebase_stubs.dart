@@ -21,14 +21,14 @@ class FirebaseDatabase {
         'name': 'Collin Jackson',
         'color': Colors.purple[500].value,
       },
-      'text': 'Hello'
+      'text': 'Hello',
     }));
     DatabaseReference._childAdded.add(new Event({
       'sender': {
         'name': 'Seth Ladd',
         'color': Colors.blue[500].value,
       },
-      'text': 'Ahoy-hoy!'
+      'imageUrl': 'https://s-media-cache-ak0.pinimg.com/736x/fd/a9/49/fda94957d5907ca90653da6f0991b7da.jpg',
     }));
   }
 

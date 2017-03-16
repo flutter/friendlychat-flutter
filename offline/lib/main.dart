@@ -46,7 +46,8 @@ class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
         _addMessage(
           name: val['sender']['name'],
           color: new Color(val['sender']['color']),
-          text: val['text']
+          text: val['text'],
+          imageUrl: val['imageUrl'],
         );
       });
     });
@@ -76,7 +77,7 @@ class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
     _messagesReference.push().set(message);
   }
 
-  void _addMessage({ String name, Color color, String text }) {
+  void _addMessage({ String name, Color color, String text, String imageUrl }) {
     AnimationController animationController = new AnimationController(
       duration: new Duration(milliseconds: 700),
       vsync: this,
@@ -85,6 +86,7 @@ class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
     ChatMessage message = new ChatMessage(
       sender: sender,
       text: text,
+      imageUrl: imageUrl,
       animationController: animationController
     );
     setState(() {
@@ -102,10 +104,16 @@ class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
         new Container(
           margin: new EdgeInsets.symmetric(horizontal: 4.0),
           child: new IconButton(
-            icon: new Icon(Icons.photo),
+            icon: new Icon(Icons.insert_photo),
             color: themeData.accentColor,
             onPressed: () {
-              // Not implemented yet
+              int count = _messages.length;
+              String url = 'http://thecatapi.com/api/images/get?format=src&type=gif&count=$count';
+                var message = {
+                  'sender': { 'name': _name, 'color': _color.value },
+                  'imageUrl': url,
+                };
+                _messagesReference.push().set(message);
             }
           )
         ),
@@ -119,11 +127,9 @@ class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
         ),
         new Container(
           margin: new EdgeInsets.symmetric(horizontal: 4.0),
-          child: new IconButton(
-            icon: new Icon(Icons.send),
+          child: new SendButton(
             onPressed: _isComposing ? () => _handleMessageAdded(_currentMessage) : null,
-            color: _isComposing ? themeData.accentColor : themeData.disabledColor,
-          )
+          ),
         )
       ]
     );
@@ -150,16 +156,35 @@ class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
   }
 }
 
+class SendButton extends StatelessWidget {
+  SendButton({ this.onPressed });
+  final VoidCallback onPressed;
+  Widget build(BuildContext context) {
+    if (Theme.of(context).platform == TargetPlatform.iOS) {
+      return new MaterialButton(
+        child: new Text("Send"),
+        onPressed: onPressed,
+      );
+    } else {
+      return new IconButton(
+        icon: new Icon(Icons.send),
+        onPressed: onPressed,
+      );
+    }
+  }
+}
 class ChatUser {
   ChatUser({ this.name, this.color });
   final String name;
   final Color color;
+  final String imageUrl;
 }
 
 class ChatMessage {
-  ChatMessage({ this.sender, this.text, this.animationController });
+  ChatMessage({ this.sender, this.text, this.imageUrl, this.animationController });
   final ChatUser sender;
   final String text;
+  final String imageUrl;
   final AnimationController animationController;
 }
 
@@ -175,14 +200,19 @@ class ChatMessageListItem extends StatelessWidget {
         curve: Curves.easeOut
       ),
       axisAlignment: 0.0,
-      child: new ListItem(
-        dense: true,
-        leading: new CircleAvatar(
-          child: new Text(message.sender.name[0]),
-          backgroundColor: message.sender.color
-        ),
-        title: new Text(message.sender.name),
-        subtitle: new Text(message.text)
+      child: new Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: <Widget>[
+          new ListTile(
+              dense: true,
+              leading: new CircleAvatar(
+                  child: new Text(message.sender.name[0]),
+                  backgroundColor: message.sender.color
+              ),
+              title: new Text(message.sender.name),
+          ),
+          message.imageUrl != null ? new Image.network(message.imageUrl) : new Text(message.text)
+        ],
       )
     );
   }
