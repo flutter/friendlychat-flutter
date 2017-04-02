@@ -4,6 +4,12 @@ description: Simple, extensible chat app powered by Flutter and Firebase.
 dependencies:
   flutter:
     sdk: flutter
+  google_sign_in:
+    path: ../../google_sign_in
+  firebase_storage:
+    path: ../../firebase_storage
+  image_picker:
+    path: ../../image_picker
 
 # For information on the generic Dart part of this file, see the
 # following page: https://www.dartlang.org/tools/pub/pubspec

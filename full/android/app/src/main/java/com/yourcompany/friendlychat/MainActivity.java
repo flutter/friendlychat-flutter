@@ -1,4 +1,4 @@
-package io.flutter.example.friendlychat;
+package com.yourcompany.friendlychat;
 
 import android.os.Bundle;
 import io.flutter.app.FlutterActivity;
