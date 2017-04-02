@@ -5,10 +5,13 @@
 import 'dart:math' show Random;
 
 import 'firebase_stubs.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:image_picker/image_picker.dart';
 
 void main() {
   runApp(new MyApp());
@@ -118,14 +121,17 @@ class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
           child: new IconButton(
             icon: new Icon(Icons.insert_photo),
             color: themeData.accentColor,
-            onPressed: () {
-              int count = _messages.length;
-              String url = 'http://thecatapi.com/api/images/get?format=src&type=gif&count=$count';
-                var message = {
-                  'sender': { 'name': _name, 'color': _color.value },
-                  'imageUrl': url,
-                };
-                _messagesReference.push().set(message);
+            onPressed: () async {
+              GoogleSignInAccount account = await (await GoogleSignIn.instance).signIn();
+              String localFileUrl = await ImagePicker.pickImage();
+              StorageReference ref = FirebaseStorage.instance.ref().child("my_image.jpg");
+              StorageUploadTask uploadTask = ref.put(localFileUrl);
+              Uri downloadUrl = (await uploadTask.future).downloadUrl;
+              var message = {
+                'sender': { 'name': account.displayName, 'color': _color.value },
+                'imageUrl': downloadUrl,
+              };
+              _messagesReference.push().set(message);
             }
           )
         ),
