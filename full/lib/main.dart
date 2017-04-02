@@ -82,7 +82,6 @@ class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
     setState(() {
       _currentMessage = InputValue.empty;
     });
-    Focus.clear(context);
     var message = {
       'sender': { 'name': _name, 'color': _color.value },
       'text': value.text,
