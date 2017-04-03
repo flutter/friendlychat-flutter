@@ -8,6 +8,8 @@ dependencies:
     path: ../../google_sign_in
   firebase_storage:
     path: ../../firebase_storage
+  firebase_database:
+    path: ../../firebase_database
   image_picker:
     path: ../../image_picker
 

@@ -2,9 +2,9 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'dart:math' show Random;
+import 'dart:io';
 
-import 'firebase_stubs.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -45,24 +45,28 @@ class ChatScreen extends StatefulWidget {
 }
 
 class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
-  String _name = "Guest${new Random().nextInt(1000)}";
-  Color _color = Colors.accents[new Random().nextInt(Colors.accents.length)][700];
   List<ChatMessage> _messages = <ChatMessage>[];
   DatabaseReference _messagesReference = FirebaseDatabase.instance.reference();
   InputValue _currentMessage = InputValue.empty;
+  GoogleSignIn _googleSignIn;
 
   @override
   void initState() {
     super.initState();
+    GoogleSignIn.initialize(scopes: <String>[]);
+    GoogleSignIn.instance.then((GoogleSignIn instance) {
+      setState(() {
+        _googleSignIn = instance;
+      });
+    });
     FirebaseAuth.instance.signInAnonymously().then((user) {
       _messagesReference.onChildAdded.listen((Event event) {
         var val = event.snapshot.val();
         _addMessage(
           name: val['sender']['name'],
-          color: new Color(val['sender']['color']),
+          senderImageUrl: val['sender']['imageUrl'],
           text: val['text'],
           imageUrl: val['imageUrl'],
-          senderImageUrl: val['senderImageUrl'],
         );
       });
     });
@@ -85,19 +89,21 @@ class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
     setState(() {
       _currentMessage = InputValue.empty;
     });
-    var message = {
-      'sender': { 'name': _name, 'color': _color.value },
-      'text': value.text,
-    };
-    _messagesReference.push().set(message);
+    _googleSignIn.signIn().then((GoogleSignInAccount user) {
+      var message = {
+        'sender': { 'name': user.displayName, 'imageUrl': user.photoUrl },
+        'text': value.text,
+      };
+      _messagesReference.push().set(message);
+    });
   }
 
-  void _addMessage({ String name, Color color, String text, String imageUrl, String senderImageUrl }) {
+  void _addMessage({ String name, String text, String imageUrl, String senderImageUrl }) {
     AnimationController animationController = new AnimationController(
       duration: new Duration(milliseconds: 700),
       vsync: this,
     );
-    ChatUser sender = new ChatUser(name: name, color: color, imageUrl: senderImageUrl);
+    ChatUser sender = new ChatUser(name: name, imageUrl: senderImageUrl);
     ChatMessage message = new ChatMessage(
       sender: sender,
       text: text,
@@ -122,15 +128,16 @@ class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
             icon: new Icon(Icons.insert_photo),
             color: themeData.accentColor,
             onPressed: () async {
-              GoogleSignInAccount account = await (await GoogleSignIn.instance).signIn();
-              String localFileUrl = await ImagePicker.pickImage();
+              GoogleSignInAccount account = await _googleSignIn.signIn();
+              File imageFile = await ImagePicker.pickImage();
               StorageReference ref = FirebaseStorage.instance.ref().child("my_image.jpg");
-              StorageUploadTask uploadTask = ref.put(localFileUrl);
+              StorageUploadTask uploadTask = ref.put(imageFile);
               Uri downloadUrl = (await uploadTask.future).downloadUrl;
               var message = {
-                'sender': { 'name': account.displayName, 'color': _color.value },
-                'imageUrl': downloadUrl,
+                'sender': { 'name': account.displayName, 'imageUrl': account.photoUrl },
+                'imageUrl': downloadUrl.toString(),
               };
+              print(message);
               _messagesReference.push().set(message);
             }
           )
@@ -185,10 +192,9 @@ class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
 }
 
 class ChatUser {
-  ChatUser({ this.name, this.color, String imageUrl })
+  ChatUser({ this.name, String imageUrl })
     : networkImage = imageUrl == null ? null : new NetworkImage(imageUrl);
   final String name;
-  final Color color;
   final ImageProvider networkImage;
 }
 
@@ -221,7 +227,6 @@ class ChatMessageListItem extends StatelessWidget {
               margin: const EdgeInsets.only(right: 16.0),
               child: new CircleAvatar(
                 child: message.sender.networkImage == null ? new Text(message.sender.name[0]) : null,
-                backgroundColor: message.sender.color,
                 backgroundImage: message.sender.networkImage,
               ),
             ),

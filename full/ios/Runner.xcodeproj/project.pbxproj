@@ -435,7 +435,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.google.firebase.codelab.FriendlyChat;
+				PRODUCT_BUNDLE_IDENTIFIER = com.google.firebase.codelab.FriendlyChatFlutter;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -457,7 +457,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.google.firebase.codelab.FriendlyChat;
+				PRODUCT_BUNDLE_IDENTIFIER = com.google.firebase.codelab.FriendlyChatFlutter;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
