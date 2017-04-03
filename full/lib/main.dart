@@ -57,6 +57,7 @@ class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
     GoogleSignIn.instance.then((GoogleSignIn instance) {
       setState(() {
         _googleSignIn = instance;
+        _googleSignIn.signInSilently();
       });
     });
     FirebaseAuth.instance.signInAnonymously().then((user) {
@@ -125,7 +126,7 @@ class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
         new Container(
           margin: new EdgeInsets.symmetric(horizontal: 4.0),
           child: new IconButton(
-            icon: new Icon(Icons.insert_photo),
+            icon: new Icon(Icons.photo_camera),
             color: themeData.accentColor,
             onPressed: () async {
               GoogleSignInAccount account = await _googleSignIn.signIn();
@@ -254,7 +255,7 @@ class ChatMessageContent extends StatelessWidget {
 
   Widget build(BuildContext context) {
     if (message.imageUrl != null)
-      return new Image.network(message.imageUrl);
+      return new Image.network(message.imageUrl, width: 250.0);  // TODO(jackson): Don't hard code the width
     else
       return new Text(message.text);
   }

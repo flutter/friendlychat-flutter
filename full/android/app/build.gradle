@@ -23,6 +23,7 @@ android {
     }
 
     defaultConfig {
+        applicationId 'io.flutter.example.friendlychat'
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
@@ -44,3 +45,5 @@ dependencies {
     androidTestCompile 'com.android.support.test:runner:0.5'
     androidTestCompile 'com.android.support.test:rules:0.5'
 }
+
+apply plugin: 'com.google.gms.google-services'
