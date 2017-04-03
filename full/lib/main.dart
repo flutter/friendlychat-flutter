@@ -3,6 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'dart:io';
+import 'dart:math';
 
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -131,14 +132,14 @@ class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
             onPressed: () async {
               GoogleSignInAccount account = await _googleSignIn.signIn();
               File imageFile = await ImagePicker.pickImage();
-              StorageReference ref = FirebaseStorage.instance.ref().child("my_image.jpg");
+              int random = new Random().nextInt(10000);
+              StorageReference ref = FirebaseStorage.instance.ref().child("image_$random.jpg");
               StorageUploadTask uploadTask = ref.put(imageFile);
               Uri downloadUrl = (await uploadTask.future).downloadUrl;
               var message = {
                 'sender': { 'name': account.displayName, 'imageUrl': account.photoUrl },
                 'imageUrl': downloadUrl.toString(),
               };
-              print(message);
               _messagesReference.push().set(message);
             }
           )
@@ -193,10 +194,9 @@ class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
 }
 
 class ChatUser {
-  ChatUser({ this.name, String imageUrl })
-    : networkImage = imageUrl == null ? null : new NetworkImage(imageUrl);
+  ChatUser({ this.name, this.imageUrl });
   final String name;
-  final ImageProvider networkImage;
+  final String imageUrl;
 }
 
 class ChatMessage {
@@ -226,10 +226,7 @@ class ChatMessageListItem extends StatelessWidget {
           children: <Widget>[
             new Container(
               margin: const EdgeInsets.only(right: 16.0),
-              child: new CircleAvatar(
-                child: message.sender.networkImage == null ? new Text(message.sender.name[0]) : null,
-                backgroundImage: message.sender.networkImage,
-              ),
+              child: new GoogleUserCircleAvatar(message.sender.imageUrl),
             ),
             new Column(
               crossAxisAlignment: CrossAxisAlignment.start,
