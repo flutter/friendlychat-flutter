@@ -15,7 +15,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:image_picker/image_picker.dart';
 
 void main() {
-  runApp(new MyApp());
+  runApp(new FriendlychatApp());
 }
 
 final ThemeData kIOSTheme = new ThemeData(
@@ -29,7 +29,7 @@ final ThemeData kDefaultTheme = new ThemeData(
   accentColor: Colors.orangeAccent[400],
 );
 
-class MyApp extends StatelessWidget {
+class FriendlychatApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
