@@ -48,7 +48,8 @@ class ChatScreen extends StatefulWidget {
 class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
   List<ChatMessage> _messages = <ChatMessage>[];
   DatabaseReference _messagesReference = FirebaseDatabase.instance.reference();
-  InputValue _currentMessage = InputValue.empty;
+  TextEditingController _textController = new TextEditingController();
+  bool _isComposing = false;
   GoogleSignIn _googleSignIn;
 
   @override
@@ -81,20 +82,12 @@ class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
     super.dispose();
   }
 
-  void _handleMessageChanged(InputValue value) {
-    setState(() {
-      _currentMessage = value;
-    });
-  }
-
-  void _handleMessageAdded(InputValue value) {
-    setState(() {
-      _currentMessage = InputValue.empty;
-    });
+  void _handleSubmitted(String text) {
+    _textController.clear();
     _googleSignIn.signIn().then((GoogleSignInAccount user) {
       var message = {
         'sender': { 'name': user.displayName, 'imageUrl': user.photoUrl },
-        'text': value.text,
+        'text': text,
       };
       _messagesReference.push().set(message);
     });
@@ -117,8 +110,6 @@ class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
     });
     animationController.forward();
   }
-
-  bool get _isComposing => _currentMessage.text.length > 0;
 
   Widget _buildTextComposer() {
     ThemeData themeData = Theme.of(context);
@@ -145,19 +136,23 @@ class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
           )
         ),
         new Flexible(
-          child: new Input(
-            value: _currentMessage,
-            hintText: 'Enter message',
-            onSubmitted: _handleMessageAdded,
-            onChanged: _handleMessageChanged,
-          )
+          child: new TextField(
+            controller: _textController,
+            onChanged: (String text) {
+              setState(() {
+                _isComposing = text.length > 0;
+              });
+            },
+            onSubmitted: _handleSubmitted,
+            decoration: new InputDecoration(hintText: "Send a message"),
+          ),
         ),
         new Container(
           margin: new EdgeInsets.symmetric(horizontal: 4.0),
           child: new PlatformAdaptiveButton(
             icon: new Icon(Icons.send),
             child: new Text("Send"),
-            onPressed: _isComposing ? () => _handleMessageAdded(_currentMessage) : null,
+            onPressed: _isComposing ? () => _handleSubmitted(_textController.text) : null,
           ),
         )
       ]
