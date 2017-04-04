@@ -5,13 +5,22 @@ dependencies:
   flutter:
     sdk: flutter
   google_sign_in:
-    path: ../../google_sign_in
-  firebase_storage:
-    path: ../../firebase_storage
+    git: git://github.com/flutter/google_sign_in
   firebase_database:
-    path: ../../firebase_database
+    git: git://github.com/flutter/firebase_database
+  firebase_storage:
+    git: git://github.com/flutter/firebase_storage
   image_picker:
-    path: ../../image_picker
+    git: git://github.com/flutter/image_picker
+  # If developing locally, use these instead:
+  # google_sign_in:
+  #   path: ../../google_sign_in
+  # firebase_database:
+  #   path: ../../firebase_database
+  # firebase_storage:
+  #   path: ../../firebase_storage
+  # image_picker:
+  #   path: ../../image_picker
 
 # For information on the generic Dart part of this file, see the
 # following page: https://www.dartlang.org/tools/pub/pubspec
