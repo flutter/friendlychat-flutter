@@ -84,6 +84,9 @@ class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
 
   void _handleSubmitted(String text) {
     _textController.clear();
+    setState(() {
+      _isComposing = false;
+    });
     _googleSignIn.signIn().then((GoogleSignInAccount user) {
       var message = {
         'sender': { 'name': user.displayName, 'imageUrl': user.photoUrl },
@@ -112,50 +115,51 @@ class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
   }
 
   Widget _buildTextComposer() {
-    ThemeData themeData = Theme.of(context);
-    return new Row(
-      children: <Widget>[
-        new Container(
-          margin: new EdgeInsets.symmetric(horizontal: 4.0),
-          child: new IconButton(
-            icon: new Icon(Icons.photo_camera),
-            color: themeData.accentColor,
-            onPressed: () async {
-              GoogleSignInAccount account = await _googleSignIn.signIn();
-              File imageFile = await ImagePicker.pickImage();
-              int random = new Random().nextInt(10000);
-              StorageReference ref = FirebaseStorage.instance.ref().child("image_$random.jpg");
-              StorageUploadTask uploadTask = ref.put(imageFile);
-              Uri downloadUrl = (await uploadTask.future).downloadUrl;
-              var message = {
-                'sender': { 'name': account.displayName, 'imageUrl': account.photoUrl },
-                'imageUrl': downloadUrl.toString(),
-              };
-              _messagesReference.push().set(message);
-            }
+    return new IconTheme(
+      data: new IconThemeData(color: Theme.of(context).accentColor),
+      child: new Row(
+        children: <Widget>[
+          new Container(
+            margin: new EdgeInsets.symmetric(horizontal: 4.0),
+            child: new IconButton(
+              icon: new Icon(Icons.photo_camera),
+              onPressed: () async {
+                GoogleSignInAccount account = await _googleSignIn.signIn();
+                File imageFile = await ImagePicker.pickImage();
+                int random = new Random().nextInt(10000);
+                StorageReference ref = FirebaseStorage.instance.ref().child("image_$random.jpg");
+                StorageUploadTask uploadTask = ref.put(imageFile);
+                Uri downloadUrl = (await uploadTask.future).downloadUrl;
+                var message = {
+                  'sender': { 'name': account.displayName, 'imageUrl': account.photoUrl },
+                  'imageUrl': downloadUrl.toString(),
+                };
+                _messagesReference.push().set(message);
+              }
+            )
+          ),
+          new Flexible(
+            child: new TextField(
+              controller: _textController,
+              onChanged: (String text) {
+                setState(() {
+                  _isComposing = text.length > 0;
+                });
+              },
+              onSubmitted: _handleSubmitted,
+              decoration: new InputDecoration.collapsed(hintText: "Send a message"),
+            ),
+          ),
+          new Container(
+            margin: new EdgeInsets.symmetric(horizontal: 4.0),
+            child: new PlatformAdaptiveButton(
+              icon: new Icon(Icons.send),
+              child: new Text("Send"),
+              onPressed: _isComposing ? () => _handleSubmitted(_textController.text) : null,
+            ),
           )
-        ),
-        new Flexible(
-          child: new TextField(
-            controller: _textController,
-            onChanged: (String text) {
-              setState(() {
-                _isComposing = text.length > 0;
-              });
-            },
-            onSubmitted: _handleSubmitted,
-            decoration: new InputDecoration.collapsed(hintText: "Send a message"),
-          ),
-        ),
-        new Container(
-          margin: new EdgeInsets.symmetric(horizontal: 4.0),
-          child: new PlatformAdaptiveButton(
-            icon: new Icon(Icons.send),
-            child: new Text("Send"),
-            onPressed: _isComposing ? () => _handleSubmitted(_textController.text) : null,
-          ),
-        )
-      ]
+        ]
+      )
     );
   }
 
