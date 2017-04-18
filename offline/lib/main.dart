@@ -53,23 +53,18 @@ class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
 
   void _handleSubmitted(String text) {
     _textController.clear();
-    setState(() {
-      _isComposing = false;
-    });
-    AnimationController animationController = new AnimationController(
-      duration: new Duration(milliseconds: 700),
-      vsync: this,
-    );
-    ChatUser sender = new ChatUser(name: _name);
     ChatMessage message = new ChatMessage(
-      sender: sender,
       text: text,
-      animationController: animationController
+      animationController: new AnimationController(
+        duration: new Duration(milliseconds: 700),
+        vsync: this,
+      ),
     );
     setState(() {
       _messages.insert(0, message);
+      _isComposing = false;
     });
-    animationController.forward();
+    message.animationController.forward();
   }
 
   Widget _buildTextComposer() {
@@ -114,10 +109,11 @@ class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
         child: new Column(
             children: <Widget>[
               new Flexible(
-                child: new ListView(
+                child: new ListView.builder(
                   padding: new EdgeInsets.all(8.0),
                   reverse: true,
-                  children: _messages.map((m) => new ChatMessageListItem(m)).toList()
+                  itemBuilder: (_, int index) => _messages[index],
+                  itemCount: _messages.length,
                 )
               ),
               new Divider(height: 1.0),
@@ -133,69 +129,42 @@ class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
   }
 }
 
-class ChatUser {
-  ChatUser({ this.name, this.imageUrl });
-  final String name;
-  final String imageUrl;
-}
-
-class ChatMessage {
-  ChatMessage({ this.sender, this.text, this.imageUrl, this.animationController });
-  final ChatUser sender;
+class ChatMessage extends StatelessWidget {
+  ChatMessage({ this.text, this.animationController });
   final String text;
-  final String imageUrl;
   final AnimationController animationController;
-}
-
-class ChatMessageListItem extends StatelessWidget {
-  ChatMessageListItem(this.message);
-
-  final ChatMessage message;
 
   Widget build(BuildContext context) {
     return new SizeTransition(
-      sizeFactor: new CurvedAnimation(
-        parent: message.animationController,
-        curve: Curves.easeOut
-      ),
-      axisAlignment: 0.0,
-      child: new Container(
-        margin: const EdgeInsets.symmetric(vertical: 10.0),
-        child: new Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            new Container(
-              margin: const EdgeInsets.only(right: 16.0),
-              child: new CircleAvatar(
-                child: new Text(_name[0])
-              ),
-            ),
-            new Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                new Text(_name, style: Theme.of(context).textTheme.subhead),
-                new Container(
-                   margin: const EdgeInsets.only(top: 5.0),
-                   child: new ChatMessageContent(message),
-                 ),
-              ],
-            ),
-          ],
+        sizeFactor: new CurvedAnimation(
+          parent: animationController,
+          curve: Curves.easeOut
         ),
-      ),
+        axisAlignment: 0.0,
+        child: new Container(
+            margin: const EdgeInsets.symmetric(vertical: 10.0),
+            child: new Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  new Container(
+                      margin: const EdgeInsets.only(right: 16.0),
+                      child: new CircleAvatar(
+                        child: new Text(_name[0])
+                      ),
+                  ),
+                  new Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        new Text(_name, style: Theme.of(context).textTheme.subhead),
+                        new Container(
+                            margin: const EdgeInsets.only(top: 5.0),
+                            child: new Text(text),
+                        ),
+                      ],
+                  ),
+                ],
+            ),
+        ),
     );
-  }
-}
-
-class ChatMessageContent extends StatelessWidget {
-  ChatMessageContent(this.message);
-
-  final ChatMessage message;
-
-  Widget build(BuildContext context) {
-    if (message.imageUrl != null)
-      return new Image.network(message.imageUrl, width: 250.0);  // TODO(jackson): Don't hard code the width
-    else
-      return new Text(message.text);
   }
 }
