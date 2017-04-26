@@ -10,6 +10,10 @@ dependencies:
     git: git://github.com/flutter/firebase_database
   firebase_storage:
     git: git://github.com/flutter/firebase_storage
+  firebase_analytics:
+    git: git://github.com/flutter/firebase_analytics
+  firebase_auth:
+    git: git://github.com/flutter/firebase_auth
   image_picker:
     git: git://github.com/flutter/image_picker
   # If developing locally, use these instead:
