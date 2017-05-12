@@ -18,29 +18,28 @@ import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:image_picker/image_picker.dart';
 
-final ThemeData kIOSTheme = new ThemeData(
+final kIOSTheme = new ThemeData(
   primarySwatch: Colors.orange,
   primaryColor: Colors.grey[100],
   primaryColorBrightness: Brightness.light,
 );
 
-final ThemeData kDefaultTheme = new ThemeData(
+final kDefaultTheme = new ThemeData(
   primarySwatch: Colors.purple,
   accentColor: Colors.orangeAccent[400],
 );
 
 // Google Sign In step
-final GoogleSignIn _googleSignIn = new GoogleSignIn();
+final _googleSignIn = new GoogleSignIn();
 
 // Auth step
-final FirebaseAuth _auth = FirebaseAuth.instance;
+final _auth = FirebaseAuth.instance;
 
 // Analytics step
-final FirebaseAnalytics _analytics = new FirebaseAnalytics();
+final _analytics = new FirebaseAnalytics();
 
 // Database step
-final DatabaseReference _reference =
-    FirebaseDatabase.instance.reference().child('messages');
+final _reference = FirebaseDatabase.instance.reference().child('messages');
 
 void main() {
   runApp(new FriendlychatApp());
@@ -91,6 +90,9 @@ class ChatMessage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 new Text(
+                // Changed in GoogleSignIn step
+                // _googleSignIn.currentUser.displayName,
+
                 // Changed in Database step
                   snapshot.value['senderName'],
                   style: Theme.of(context).textTheme.subhead
@@ -143,7 +145,7 @@ class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
     return new Scaffold(
         appBar: new AppBar(
           title: new Text("Friendlychat"),
-          elevation: Theme.of(context).platform == TargetPlatform.iOS ? 0 : 4,
+          elevation: Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
         ),
         body: new Column(children: <Widget>[
           new Flexible(
@@ -237,11 +239,15 @@ class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
 
   Future<Null> _ensureLoggedIn() async {
     // GoogleSignIn step
-    GoogleSignInAccount user = await _googleSignIn.currentUser;
-    if (user == null)
+    var user = _googleSignIn.currentUser;
+    if (user == null) {
       user = await _googleSignIn.signInSilently();
-    if (user == null)
+    }
+    if (user == null) {
       await _googleSignIn.signIn();
+      // Analytics step
+      _analytics.logLogin();
+    }
 
     // Auth step
     if (_auth.currentUser == null || _auth.currentUser.isAnonymous) {
@@ -251,8 +257,6 @@ class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
         idToken: credentials.idToken,
         accessToken: credentials.accessToken,
       );
-      // Analytics step
-      _analytics.logLogin();
     }
   }
 

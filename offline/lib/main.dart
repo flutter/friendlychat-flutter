@@ -38,14 +38,14 @@ class FriendlychatApp extends StatelessWidget {
 
 @override
 class ChatMessage extends StatelessWidget {
-  ChatMessage({this.text, this.animation});
+  ChatMessage({this.text, this.animationController});
   final String text;
-  final Animation<double> animation;
+  final AnimationController animationController;
 
   Widget build(BuildContext context) {
     return new SizeTransition(
       sizeFactor: new CurvedAnimation(
-          parent: animation, curve: Curves.easeOut),
+          parent: animationController, curve: Curves.easeOut),
       axisAlignment: 0.0,
       child: new Container(
         margin: const EdgeInsets.symmetric(vertical: 10.0),
@@ -78,9 +78,8 @@ class ChatScreen extends StatefulWidget {
   State createState() => new ChatScreenState();
 }
 
-class ChatScreenState extends State<ChatScreen> {
-  final GlobalKey<AnimatedListState> _listKey = new GlobalKey<AnimatedListState>();
-  final List<String> _messages = <String>[];
+class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
+  final List<ChatMessage> _messages = <ChatMessage>[];
   final TextEditingController _textController = new TextEditingController();
   bool _isComposing = false;
 
@@ -89,23 +88,16 @@ class ChatScreenState extends State<ChatScreen> {
     return new Scaffold(
         appBar: new AppBar(
           title: new Text("Friendlychat"),
-          elevation: Theme.of(context).platform == TargetPlatform.iOS ? 0 : 4,
+          elevation: Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
         ),
         body: new Column(children: <Widget>[
           new Flexible(
-            child: new AnimatedList(
-              key: _listKey,
-              padding: new EdgeInsets.all(8.0),
-              reverse: true,
-              itemBuilder: (_, int index, Animation<double> animation) {
-                return new ChatMessage(
-                  animation: animation,
-                  text: _messages[index],
-                );
-              },
-              initialItemCount: _messages.length,
-            ),
-          ),
+              child: new ListView.builder(
+            padding: new EdgeInsets.all(8.0),
+            reverse: true,
+            itemBuilder: (_, int index) => _messages[index],
+            itemCount: _messages.length,
+          )),
           new Divider(height: 1.0),
           new Container(
             decoration:
@@ -160,12 +152,23 @@ class ChatScreenState extends State<ChatScreen> {
 
   void _handleSubmitted(String text) {
     _textController.clear();
-    _messages.insert(0, text);
-    _listKey.currentState.insertItem(0, duration: const Duration(milliseconds: 300));
+    ChatMessage message = new ChatMessage(
+      text: text,
+      animationController: new AnimationController(
+        duration: new Duration(milliseconds: 700),
+        vsync: this,
+      ),
+    );
+    setState(() {
+      _messages.insert(0, message);
+    });
+    message.animationController.forward();
   }
 
   @override
   void dispose() {
+    for (ChatMessage message in _messages)
+      message.animationController.dispose();
     super.dispose();
   }
 }
