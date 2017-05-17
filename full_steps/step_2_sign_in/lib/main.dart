@@ -164,6 +164,9 @@ class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
 
   Future<Null> _handleSubmitted(String text) async {
     _textController.clear();
+    setState(() {
+      _isComposing = false;
+    });
     await _ensureLoggedIn();
     _sendMessage(text: text);
   }

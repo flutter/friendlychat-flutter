@@ -38,6 +38,10 @@ Future<Null> _ensureLoggedIn() async {
   GoogleSignInAccount user = googleSignIn.currentUser;
   if (user == null)
     user = await googleSignIn.signInSilently();
+  if (user == null) {
+      user = await googleSignIn.signIn();
+      analytics.logLogin();
+    }
   if (auth.currentUser == null || auth.currentUser.isAnonymous) {
     GoogleSignInAuthentication credentials =
     await googleSignIn.currentUser.authentication;
@@ -45,7 +49,6 @@ Future<Null> _ensureLoggedIn() async {
       idToken: credentials.idToken,
       accessToken: credentials.accessToken,
     );
-    analytics.logLogin();
   }
 }
 
@@ -195,6 +198,9 @@ class ChatScreenState extends State<ChatScreen> {
 
   Future<Null> _handleSubmitted(String text) async {
     _textController.clear();
+    setState(() {
+      _isComposing = false;
+    });
     await _ensureLoggedIn();
     _sendMessage(text: text);
   }

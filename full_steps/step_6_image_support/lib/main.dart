@@ -43,6 +43,10 @@ Future<Null> _ensureLoggedIn() async {
   GoogleSignInAccount user = googleSignIn.currentUser;
   if (user == null)
     user = await googleSignIn.signInSilently();
+  if (user == null) {
+    user = await googleSignIn.signIn();
+    analytics.logLogin();
+  }
   if (auth.currentUser == null || auth.currentUser.isAnonymous) {
     GoogleSignInAuthentication credentials =
     await googleSignIn.currentUser.authentication;
@@ -50,7 +54,6 @@ Future<Null> _ensureLoggedIn() async {
       idToken: credentials.idToken,
       accessToken: credentials.accessToken,
     );
-    analytics.logLogin();
   }
 }
 
@@ -97,10 +100,10 @@ class ChatMessage extends StatelessWidget {
                   margin: const EdgeInsets.only(top: 5.0),
                   child: snapshot.value['imageUrl'] != null ?
                     new Image.network(
-                    snapshot.value['imageUrl'],
+                      snapshot.value['imageUrl'],
                       width: 250.0,
-                  ) :
-                  new Text(snapshot.value['text']),
+                    ) :
+                    new Text(snapshot.value['text']),
                 ),
               ],
             ),
@@ -218,6 +221,9 @@ class ChatScreenState extends State<ChatScreen> {
 
   Future<Null> _handleSubmitted(String text) async {
     _textController.clear();
+    setState(() {
+      _isComposing = false;
+    });
     await _ensureLoggedIn();
     _sendMessage(text: text);
   }
