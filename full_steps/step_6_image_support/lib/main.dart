@@ -88,13 +88,13 @@ class ChatMessage extends StatelessWidget {
           children: <Widget>[
             new Container(
               margin: const EdgeInsets.only(right: 16.0),
-              child: new GoogleUserCircleAvatar(snapshot.value['senderPhotoUrl']),     //modified
+              child: new GoogleUserCircleAvatar(snapshot.value['senderPhotoUrl']),
             ),
             new Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 new Text(
-                    snapshot.value['senderName'],                  //modified
+                    snapshot.value['senderName'],
                     style: Theme.of(context).textTheme.subhead),
                 new Container(
                   margin: const EdgeInsets.only(top: 5.0),
