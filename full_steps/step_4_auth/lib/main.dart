@@ -39,7 +39,7 @@ Future<Null> _ensureLoggedIn() async {
     user = await googleSignIn.signIn();
     analytics.logLogin();
   }
-  if (auth.currentUser == null || auth.currentUser.isAnonymous) {
+  if (auth.currentUser == null) {
     GoogleSignInAuthentication credentials =
     await googleSignIn.currentUser.authentication;
     await auth.signInWithGoogle(
@@ -108,12 +108,6 @@ class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
   final List<ChatMessage> _messages = <ChatMessage>[];
   final TextEditingController _textController = new TextEditingController();
   bool _isComposing = false;
-
-  @override
-  void initState() {
-    super.initState();
-    auth.signInAnonymously();
-  }
 
   @override
   Widget build(BuildContext context) {

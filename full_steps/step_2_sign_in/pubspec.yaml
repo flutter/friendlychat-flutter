@@ -4,12 +4,12 @@ description: A new flutter project.
 dependencies:
   flutter:
     sdk: flutter
-  image_picker: 0.0.1
-  google_sign_in: 0.0.1
-  firebase_analytics: 0.0.1
-  firebase_auth: 0.0.1
-  firebase_database: 0.0.2
-  firebase_storage: 0.0.1
+  image_picker: ^0.0.2
+  google_sign_in: ^0.0.2
+  firebase_analytics: ^0.0.2
+  firebase_auth: ^0.0.2
+  firebase_database: ^0.0.4
+  firebase_storage: ^0.0.2
 
 # For information on the generic Dart part of this file, see the
 # following page: https://www.dartlang.org/tools/pub/pubspec

@@ -42,7 +42,7 @@ Future<Null> _ensureLoggedIn() async {
       user = await googleSignIn.signIn();
       analytics.logLogin();
     }
-  if (auth.currentUser == null || auth.currentUser.isAnonymous) {
+  if (auth.currentUser == null) {
     GoogleSignInAuthentication credentials =
     await googleSignIn.currentUser.authentication;
     await auth.signInWithGoogle(
@@ -118,12 +118,6 @@ class ChatScreenState extends State<ChatScreen> {
   bool _isComposing = false;
 
   @override
-  void initState() {
-    super.initState();
-    auth.signInAnonymously();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return new Scaffold(
         appBar: new AppBar(
@@ -134,15 +128,16 @@ class ChatScreenState extends State<ChatScreen> {
           new Flexible(
             child: new FirebaseAnimatedList(
               query: reference,
-                padding: new EdgeInsets.all(8.0),
-                reverse: true,
-                itemBuilder: (_, DataSnapshot snapshot, Animation<double> animation) {
-                  return new ChatMessage(
-                    snapshot: snapshot,
-                    animation: animation
-                  );
-                },
-              ),
+              sort: (a, b) => b.key.compareTo(a.key),
+              padding: new EdgeInsets.all(8.0),
+              reverse: true,
+              itemBuilder: (_, DataSnapshot snapshot, Animation<double> animation) {
+                return new ChatMessage(
+                  snapshot: snapshot,
+                  animation: animation
+                );
+              },
+            ),
           ),
           new Divider(height: 1.0),
           new Container(
