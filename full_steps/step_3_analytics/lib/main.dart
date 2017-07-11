@@ -70,7 +70,7 @@ class ChatMessage extends StatelessWidget {
           children: <Widget>[
             new Container(
               margin: const EdgeInsets.only(right: 16.0),
-              child: new CircleAvatar(backgroundImage: new NetworkImage(snapshot.value['senderPhotoUrl'])),
+              child: new CircleAvatar(backgroundImage: new NetworkImage(googleSignIn.currentUser.photoUrl)),
             ),
             new Column(
               crossAxisAlignment: CrossAxisAlignment.start,
