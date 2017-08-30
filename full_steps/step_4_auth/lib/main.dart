@@ -39,7 +39,7 @@ Future<Null> _ensureLoggedIn() async {
     user = await googleSignIn.signIn();
     analytics.logLogin();
   }
-  if (auth.currentUser == null) {
+  if (await auth.currentUser() == null) {
     GoogleSignInAuthentication credentials =
     await googleSignIn.currentUser.authentication;
     await auth.signInWithGoogle(
