@@ -10,18 +10,16 @@ dependencies:
   firebase_auth: 0.2.0
   firebase_database: 0.0.12
   firebase_storage: 0.0.5
+  # The following line ensures that the Material Icons font is
+  # included with your application, so that you can use the icons in
+  # the Icons class.
+  material_icons_font: ^0.1.1
 
 # For information on the generic Dart part of this file, see the
 # following page: https://www.dartlang.org/tools/pub/pubspec
 
 # The following section is specific to Flutter.
 flutter:
-
-  # The following line ensures that the Material Icons font is
-  # included with your application, so that you can use the icons in
-  # the Icons class.
-  uses-material-design: true
-
   # To add assets to your application, add an assets section here, in
   # this "flutter" section, as in:
   # assets:
