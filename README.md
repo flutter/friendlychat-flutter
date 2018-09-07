@@ -7,7 +7,7 @@ made available soon.
 The offline version of Friendlychat requires only a recent copy of Flutter.
 The Firebase version of Friendlychat requires that you register your Android app's
 key, create an OAuth iOS client id, and download a google-services.json file.
-See the codelab for more information.
+See the [codelab](https://github.com/flutter/friendlychat-steps/files/2296209/OriginalFirebaseforFlutterCodelab.pdf) for more information.
 
 ## What it looks like
 
