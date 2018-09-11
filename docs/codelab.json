@@ -1,0 +1,31 @@
+{
+  "environment": "web",
+  "source": "16KXsh9H9Irb6ff0FTETrEcCDmB30jfdBFdF9A8vSVrA",
+  "format": "md",
+  "prefix": "../../",
+  "mainga": "UA-49880327-14",
+  "updated": "2018-09-10T20:39:32Z",
+  "id": "flutter-firebase",
+  "duration": 40,
+  "title": "Firebase for Flutter",
+  "author": "wmleler",
+  "summary": "Flutter is a mobile app SDK for developing high-fidelity apps for iOS and Android. Firebase is Google's software platform for deploying and hosting apps. In this codelab, you'll enable Firebase features for a Flutter app. \n\nYou'll learn how to connect a Flutter app to a Firebase database, and how to use a transaction to update shared information.",
+  "theme": "flutter",
+  "status": [
+    "draft"
+  ],
+  "category": [
+    "Flutter",
+    "Firebase"
+  ],
+  "tags": [
+    "devfest18",
+    "io2018",
+    "kiosk",
+    "tag-firebase",
+    "tag-flutter",
+    "web"
+  ],
+  "feedback": "https://github.com/flutter/flutter/issues",
+  "url": "flutter-firebase"
+}
