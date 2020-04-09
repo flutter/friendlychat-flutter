@@ -2,7 +2,7 @@
 
 This is the source code for the Flutter FriendlyChat codelab.
 Codelab instructions are available in
-[Building Beautiful UIs with Flutter](https://codelabs.developers.google.com/codelabs/flutter/index.html?index=..%2F..index#0).
+[Building Beautiful UIs with Flutter](https://codelabs.developers.google.com/codelabs/flutter/index.html).
 
 If you are looking for the out of date,
 retired codelab that implemented
