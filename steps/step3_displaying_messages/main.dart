@@ -23,6 +23,7 @@ class FriendlyChatApp extends StatelessWidget {
 class ChatMessage extends StatelessWidget {
   ChatMessage({this.text});
   final String text;
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -37,7 +38,6 @@ class ChatMessage extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // TextTheme.subhead was renamed to headline4 after SDK 1.12.
               Text(_name, style: Theme.of(context).textTheme.headline4),
               Container(
                 margin: EdgeInsets.only(top: 5.0),
@@ -46,33 +46,26 @@ class ChatMessage extends StatelessWidget {
             ],
           ),
         ],
-      ),
+      )
     );
   }
 }
+
 
 class ChatScreen extends StatefulWidget {
   @override
-  State createState() => ChatScreenState();
+  _ChatScreenState createState() => _ChatScreenState();
 }
 
-class ChatScreenState extends State<ChatScreen> {
+class _ChatScreenState extends State<ChatScreen> {
   final List<ChatMessage> _messages = [];
-  final TextEditingController _textController = TextEditingController();
+  final _textController = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
 
-  void _handleSubmitted(String text) {
-    _textController.clear();
-    ChatMessage message = ChatMessage(
-      text: text,
-    );
-    setState(() {
-      _messages.insert(0, message);
-    });
-  }
-
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text ('Friendlychat')),
+      appBar: AppBar(title: Text ('FriendlyChat')),
       body: Column(
         children: [
           Flexible(
@@ -105,19 +98,30 @@ class ChatScreenState extends State<ChatScreen> {
               child: TextField(
                 controller: _textController,
                 onSubmitted: _handleSubmitted,
-                decoration: InputDecoration.collapsed(
-                    hintText: 'Send a message'),
+                decoration: InputDecoration.collapsed(hintText: 'Send a message'),
+                focusNode: _focusNode,
               ),
             ),
             Container(
               margin: EdgeInsets.symmetric(horizontal: 4.0),
               child: IconButton(
-                  icon: Icon(Icons.send),
+                  icon: const Icon(Icons.send),
                   onPressed: () => _handleSubmitted(_textController.text)),
-            ),
+            )
           ],
         ),
       ),
     );
+  }
+
+  void _handleSubmitted(String text) {
+    _textController.clear();
+    ChatMessage message = ChatMessage(
+      text: text,
+    );
+    setState(() {
+      _messages.insert(0, message);
+    });
+    _focusNode.requestFocus();
   }
 }

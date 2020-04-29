@@ -20,10 +20,10 @@ class FriendlyChatApp extends StatelessWidget {
 
 class ChatScreen extends StatefulWidget {
   @override
-  State createState() => ChatScreenState();
+  State createState() => _ChatScreenState();
 }
 
-class ChatScreenState extends State<ChatScreen> {
+class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _textController = TextEditingController();
 
   void _handleSubmitted(String text) {
@@ -42,7 +42,7 @@ class ChatScreenState extends State<ChatScreen> {
     return IconTheme(
       data: IconThemeData(color: Theme.of(context).accentColor),
       child: Container(
-        margin: EdgeInsets.symmetric(horizontal: 8.0),
+        margin: const EdgeInsets.symmetric(horizontal: 8.0),
         child: Row(
           children: [
             Flexible(
@@ -54,7 +54,7 @@ class ChatScreenState extends State<ChatScreen> {
               ),
             ),
             Container(
-              margin: EdgeInsets.symmetric(horizontal: 4.0),
+              margin: const EdgeInsets.symmetric(horizontal: 4.0),
               child: IconButton(
                   icon: Icon(Icons.send),
                   onPressed: () => _handleSubmitted(_textController.text)),
