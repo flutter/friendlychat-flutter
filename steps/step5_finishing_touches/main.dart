@@ -7,7 +7,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 
 void main() {
-  runApp(FriendlyChatApp());
+  runApp(
+    FriendlyChatApp(),
+  );
 }
 
 final ThemeData kIOSTheme = ThemeData(
@@ -24,6 +26,10 @@ final ThemeData kDefaultTheme = ThemeData(
 String _name = 'Your Name';
 
 class FriendlyChatApp extends StatelessWidget {
+  const FriendlyChatApp({
+    Key key, 
+  }) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
