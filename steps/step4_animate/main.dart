@@ -130,16 +130,16 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
     _textController.clear();
     ChatMessage message = ChatMessage(
       text: text,
-      animationController: AnimationController(
-        duration: const Duration(milliseconds: 700),
-        vsync: this,
-      ),
+      animationController: AnimationController(      // NEW
+        duration: const Duration(milliseconds: 700), // NEW
+        vsync: this,                                 // NEW
+      ),                                             // NEW
     );
     setState(() {
       _messages.insert(0, message);
     });
     _focusNode.requestFocus();
-    message.animationController.forward();
+    message.animationController.forward();           // NEW
   }
 
   @override
