@@ -1,3 +1,8 @@
+# ARCHIVED
+
+The code from this repository has been updated and migrated to the 
+[flutter/codelabs](https://github.com/flutter/codelabs/tree/master/friendly_chat) repository.
+
 # FriendlyChat for Flutter
 
 This is the source code for the Flutter FriendlyChat codelab.
